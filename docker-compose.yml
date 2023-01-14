@@ -10,7 +10,7 @@ services:
       GAMEMODE: survival
       DIFFICULTY: normal
       LEVEL_SEED: 9008355401877120259
-      DEFAULT_PLAYER_PERMISSION_LEVEL: operator
+      OPS: 2535449079439635
     ports:
       - "19132:19132/udp"
     volumes:
