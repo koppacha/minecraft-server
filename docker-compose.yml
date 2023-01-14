@@ -1,32 +1,33 @@
-version: "3"
-
+version: '3.4'
 services:
-  # Application
-  mc-vanilla:
-    image: itzg/minecraft-server
-    ports:
-      - "25565:25565"
+  bds:
+    image: itzg/minecraft-bedrock-server
+    container_name: bedrock_server
     environment:
       EULA: "TRUE"
-      MEMORY: 2G
+      SERVER_NAME: world230109
+      LEVEL_NAME: 2023-01-09
+      GAMEMODE: survival
+      DIFFICULTY: normal
+      LEVEL_SEED: 9008355401877120259
+      DEFAULT_PLAYER_PERMISSION_LEVEL: operator
+    ports:
+      - "19132:19132/udp"
     volumes:
-      - ./data:/data
-      - /etc/timezone:/etc/timezone:ro
-    tty: true
+      - /opt/bedrock/server:/data
     stdin_open: true
-    restart: always
-    deploy:
-      resources:
-        limits:
-          memory: 2G # environmentの1.25倍がベター
+    tty: true
 
-  # Backup
   backup:
-    image: itzg/mc-backup
+    image: kaiede/minecraft-bedrock-backup
+    container_name: minecraft_backup
+    restart: always
     depends_on:
-      - mc-vanilla
+      - "bds"
+    environment:
+      TZ: "Asia/Tokyo"
+    tty: true
     volumes:
-      - ./data:/data:ro
-      - ./mc-backups:/backups
-      - /etc/timezone:/etc/timezone:ro
-    network_mode: "service:mc-vanilla"
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/bedrock/backups:/backups
+      - /opt/bedrock/server:/server
